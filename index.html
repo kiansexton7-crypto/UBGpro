@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UBG Pro</title>
+  <meta name="description" content="Play hundreds of unblocked games instantly. No downloads, no restrictions."/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">⚡</span>
+    <span class="logo-text">UBG<span class="logo-accent">Pro</span></span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="#" class="nav-item" data-page="games"><i class="fas fa-gamepad"></i><span>All Games</span></a>
+    <a href="#" class="nav-item" data-page="unity"><i class="fas fa-cube"></i><span>Unity Games</span></a>
+    <a href="#" class="nav-item" data-page="proxy"><i class="fas fa-shield-alt"></i><span>Proxy</span></a>
+    <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-mask"></i><span>Tab Cloak</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="proxy-status" id="proxyStatus">
+      <span class="status-dot"></span>
+      <span class="status-text">Checking proxy...</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search games..."/>
+      <kbd class="search-kbd">⌘K</kbd>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-icon" id="panicBtn" title="Panic Key (Alt+X)"><i class="fas fa-exclamation-triangle"></i></button>
+      <button class="btn-icon" id="cloakBtn" title="Quick Cloak"><i class="fas fa-user-secret"></i></button>
+    </div>
+  </header>
+
+  <!-- PAGES -->
+  <div class="page active" id="page-home">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="pulse-dot"></span>100+ Games Live</div>
+        <h1>Play Anything, <span class="gradient-text">Anywhere</span></h1>
+        <p>Unblocked games with built-in proxy, tab cloaking, and instant play. No downloads.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="showPage('games')">Browse Games <i class="fas fa-arrow-right"></i></button>
+          <button class="btn-ghost" onclick="showPage('proxy')">Open Proxy <i class="fas fa-shield-alt"></i></button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="float-card c1"><i class="fas fa-gamepad"></i><span>100+ Games</span></div>
+        <div class="float-card c2"><i class="fas fa-bolt"></i><span>Instant Play</span></div>
+        <div class="float-card c3"><i class="fas fa-lock-open"></i><span>Unblocked</span></div>
+        <div class="hero-glow"></div>
+      </div>
+    </section>
+
+    <!-- CATEGORY FILTERS -->
+    <div class="section-header">
+      <h2>Browse by Category</h2>
+    </div>
+    <div class="cat-filters" id="catFilters">
+      <button class="cat-btn active" data-cat="all">🎮 All</button>
+      <button class="cat-btn" data-cat="action">⚔️ Action</button>
+      <button class="cat-btn" data-cat="puzzle">🧩 Puzzle</button>
+      <button class="cat-btn" data-cat="racing">🏎️ Racing</button>
+      <button class="cat-btn" data-cat="shooting">🔫 Shooting</button>
+      <button class="cat-btn" data-cat="multiplayer">👥 Multiplayer</button>
+      <button class="cat-btn" data-cat="unity">🎲 Unity</button>
+      <button class="cat-btn" data-cat="adventure">🗺️ Adventure</button>
+      <button class="cat-btn" data-cat="sports">⚽ Sports</button>
+      <button class="cat-btn" data-cat="strategy">♟️ Strategy</button>
+    </div>
+
+    <!-- FEATURED -->
+    <div class="section-header"><h2>⭐ Featured</h2></div>
+    <div class="game-grid featured-grid" id="featuredGrid"></div>
+
+    <!-- ALL GAMES -->
+    <div class="section-header"><h2>🎮 All Games</h2><span id="gameCount" class="game-count"></span></div>
+    <div class="game-grid" id="gameGrid"></div>
+  </div>
+
+  <!-- ALL GAMES PAGE -->
+  <div class="page" id="page-games">
+    <div class="section-header" style="margin-top:2rem"><h2>All Games</h2><span id="gameCount2" class="game-count"></span></div>
+    <div class="cat-filters" id="catFilters2"></div>
+    <div class="game-grid" id="gameGrid2"></div>
+  </div>
+
+  <!-- UNITY PAGE -->
+  <div class="page" id="page-unity">
+    <div class="section-header" style="margin-top:2rem"><h2>🎲 Unity WebGL Games</h2></div>
+    <p class="page-desc">Full Unity WebGL games running directly in your browser.</p>
+    <div class="game-grid" id="unityGrid"></div>
+  </div>
+
+  <!-- PROXY PAGE -->
+  <div class="page" id="page-proxy">
+    <div class="proxy-page">
+      <div class="proxy-header">
+        <h2><i class="fas fa-shield-alt"></i> Stealth Proxy</h2>
+        <p>Browse any website anonymously. Auto-switches proxy if one fails.</p>
+      </div>
+      <div class="proxy-bar">
+        <div class="proxy-selector">
+          <label>Proxy Engine</label>
+          <select id="proxyEngine">
+            <option value="uv">Ultraviolet</option>
+            <option value="rh">Rammerhead</option>
+            <option value="corr">Corrosion</option>
+          </select>
+        </div>
+        <div class="url-bar-wrap">
+          <i class="fas fa-globe"></i>
+          <input type="text" id="proxyUrl" placeholder="Enter any URL (e.g. google.com)" />
+          <button class="btn-primary" id="proxyGo">Go <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="proxy-status-list" id="proxyStatusList"></div>
+      <div class="proxy-frame-wrap">
+        <iframe id="proxyFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+        <div class="proxy-placeholder" id="proxyPlaceholder">
+          <i class="fas fa-shield-alt"></i>
+          <p>Enter a URL above to start browsing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOAK PAGE -->
+  <div class="page" id="page-cloak">
+    <div class="cloak-page">
+      <div class="proxy-header">
+        <h2><i class="fas fa-mask"></i> Tab Cloaker</h2>
+        <p>Disguise this tab as something else. Press <kbd>Alt+X</kbd> as a panic key.</p>
+      </div>
+      <div class="cloak-presets">
+        <button class="cloak-preset" data-title="Google Docs" data-icon="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico">
+          <img src="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico" onerror="this.style.display='none'"/>
+          Google Docs
+        </button>
+        <button class="cloak-preset" data-title="Google Classroom" data-icon="https://ssl.gstatic.com/classroom/favicon.png">
+          <img src="https://ssl.gstatic.com/classroom/favicon.png" onerror="this.style.display='none'"/>
+          Google Classroom
+        </button>
+        <button class="cloak-preset" data-title="Khan Academy" data-icon="https://www.khanacademy.org/favicon.ico">
+          <img src="https://www.khanacademy.org/favicon.ico" onerror="this.style.display='none'"/>
+          Khan Academy
+        </button>
+        <button class="cloak-preset" data-title="Desmos Graphing Calculator" data-icon="https://www.desmos.com/assets/img/favicons/favicon-32x32.png">
+          <img src="https://www.desmos.com/assets/img/favicons/favicon-32x32.png" onerror="this.style.display='none'"/>
+          Desmos
+        </button>
+        <button class="cloak-preset" data-title="Wikipedia" data-icon="https://en.wikipedia.org/favicon.ico">
+          <img src="https://en.wikipedia.org/favicon.ico" onerror="this.style.display='none'"/>
+          Wikipedia
+        </button>
+        <button class="cloak-preset" data-title="Quizlet" data-icon="https://quizlet.com/favicon.ico">
+          <img src="https://quizlet.com/favicon.ico" onerror="this.style.display='none'"/>
+          Quizlet
+        </button>
+      </div>
+      <div class="cloak-custom">
+        <h3>Custom Cloak</h3>
+        <div class="cloak-form">
+          <div class="form-group">
+            <label>Tab Title</label>
+            <input type="text" id="cloakTitle" placeholder="e.g. Google Docs - Untitled"/>
+          </div>
+          <div class="form-group">
+            <label>Favicon URL</label>
+            <input type="text" id="cloakIcon" placeholder="https://example.com/favicon.ico"/>
+          </div>
+          <button class="btn-primary" id="applyCloakBtn">Apply Cloak</button>
+          <button class="btn-ghost" id="removeCloakBtn">Remove Cloak</button>
+        </div>
+      </div>
+      <div class="cloak-blank-wrap">
+        <h3>About:Blank Cloak</h3>
+        <p>Opens the site in a hidden about:blank tab — the URL bar shows nothing.</p>
+        <button class="btn-primary" id="blankCloakBtn"><i class="fas fa-ghost"></i> Open in About:Blank</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- GAME MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="game-modal" id="gameModal">
+    <div class="modal-header">
+      <div class="modal-info">
+        <h3 id="modalTitle">Game Title</h3>
+        <span id="modalCat" class="modal-cat"></span>
+      </div>
+      <div class="modal-controls">
+        <button class="btn-icon" id="fullscreenBtn" title="Fullscreen"><i class="fas fa-expand"></i></button>
+        <button class="btn-icon" id="closeModal" title="Close"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <iframe id="gameFrame" src="about:blank" allowfullscreen allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/games.js"></script>
+<script src="js/proxy.js"></script>
+<script src="js/cloak.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
