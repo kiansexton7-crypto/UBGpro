@@ -29,9 +29,13 @@ function showPage(pageId) {
 function buildCard(game) {
   const card = document.createElement("div");
   card.className = "game-card";
+  
+  const thumbHtml = game.thumb 
+    ? `<div class="game-thumb"><img src="${game.thumb}" alt="${game.name}" loading="lazy"/>`
+    : `<div class="game-thumb-placeholder" style="background: linear-gradient(135deg, ${hashColor(game.id)}, ${hashColor(game.id + 50)})"><span style="font-size:2.8rem">${game.emoji}</span>`;
+
   card.innerHTML = `
-    <div class="game-thumb-placeholder" style="background: linear-gradient(135deg, ${hashColor(game.id)}, ${hashColor(game.id + 50)})">
-      <span style="font-size:2.8rem">${game.emoji}</span>
+    ${thumbHtml}
       <div class="game-overlay">
         <div class="play-btn"><i class="fas fa-play"></i></div>
       </div>
