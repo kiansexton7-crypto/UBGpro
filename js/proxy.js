@@ -103,7 +103,14 @@ function updateProxyStatusUI(state, name) {
 
 function navigateProxy(rawUrl) {
   if (!rawUrl) return;
-  if (!rawUrl.startsWith("http")) rawUrl = "https://" + rawUrl;
+  
+  rawUrl = rawUrl.trim();
+  const isUrl = /^https?:\/\//i.test(rawUrl) || (rawUrl.includes('.') && !rawUrl.includes(' '));
+  if (!isUrl) {
+    rawUrl = 'https://www.google.com/search?q=' + encodeURIComponent(rawUrl);
+  } else if (!rawUrl.startsWith("http")) {
+    rawUrl = "https://" + rawUrl;
+  }
 
   const frame = document.getElementById("proxyFrame");
   const placeholder = document.getElementById("proxyPlaceholder");
@@ -149,4 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Enter") navigateProxy(urlInput.value);
     });
   }
+
+  const quickLinks = document.querySelectorAll(".quick-link-btn");
+  quickLinks.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const url = btn.getAttribute("data-url");
+      if (urlInput) urlInput.value = url;
+      navigateProxy(url);
+    });
+  });
 });
