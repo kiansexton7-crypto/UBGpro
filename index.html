@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="css/style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <!-- Firebase Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -23,6 +28,7 @@
     <a href="#" class="nav-item" data-page="unity"><i class="fas fa-cube"></i><span>Unity Games</span></a>
     <a href="#" class="nav-item" data-page="proxy"><i class="fas fa-shield-alt"></i><span>Proxy</span></a>
     <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-mask"></i><span>Tab Cloak</span></a>
+    <a href="#" class="nav-item" data-page="chat"><i class="fas fa-comments"></i><span>Global Chat</span></a>
   </nav>
   <div class="sidebar-bottom">
     <div class="proxy-status" id="proxyStatus">
@@ -44,6 +50,11 @@
       <kbd class="search-kbd">⌘K</kbd>
     </div>
     <div class="topbar-actions">
+      <div class="user-profile" id="userProfileBtn" style="display:none; align-items:center; gap:8px; font-weight:600; margin-right:8px; cursor:pointer; color:var(--text)">
+        <i class="fas fa-user-circle" style="color:var(--accent); font-size:1.2rem;"></i> <span></span>
+      </div>
+      <button class="btn-primary" id="loginBtn" style="padding: 8px 16px; margin-right: 8px;">Login</button>
+      <button class="btn-ghost" id="logoutBtn" style="display:none; padding: 8px 16px; margin-right: 8px;">Logout</button>
       <button class="btn-icon" id="panicBtn" title="Panic Key (Alt+X)"><i class="fas fa-exclamation-triangle"></i></button>
       <button class="btn-icon" id="cloakBtn" title="Quick Cloak"><i class="fas fa-user-secret"></i></button>
     </div>
@@ -207,6 +218,31 @@
     </div>
   </div>
 
+  <!-- CHAT PAGE -->
+  <div class="page" id="page-chat">
+    <div class="chat-page">
+      <div class="chat-header">
+        <h2><i class="fas fa-comments"></i> Global Chat</h2>
+        <p>Chat with other players on UBGPro in real-time!</p>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages will load here -->
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-login-prompt" id="chatLoginPrompt">
+            <p>You must be logged in to chat.</p>
+            <button class="btn-primary" id="openChatLoginBtn">Login / Sign Up</button>
+          </div>
+          <form class="chat-form" id="chatForm" style="display:none">
+            <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" maxlength="200" />
+            <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- GAME MODAL -->
@@ -228,9 +264,37 @@
   </div>
 </div>
 
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="auth-modal">
+    <div class="modal-header">
+      <h3 id="authTitle">Welcome Back</h3>
+      <button class="btn-icon" id="closeAuthModal" title="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="authForm" class="auth-form">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="authUsername" placeholder="e.g. Gamer123" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-primary auth-submit" id="authSubmitBtn">Login <i class="fas fa-sign-in-alt"></i></button>
+        <a href="#" class="auth-toggle" id="authToggle">Need an account? <span>Sign Up</span></a>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- Custom Scripts -->
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chat.js"></script>
 <script src="js/games.js"></script>
 <script src="js/proxy.js"></script>
 <script src="js/cloak.js"></script>
