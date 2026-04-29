@@ -43,7 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getUsername() {
     const user = firebase.auth().currentUser;
-    return (user && user.email) ? user.email.replace("@ubgpro.local", "").toLowerCase() : null;
+    if (!user || !user.email) return null;
+    return user.email.replace("@ubgpro.local", "").toLowerCase();
   }
 
   // ============================================================
@@ -64,7 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
       msgs.forEach(msg => {
         const msgEl = document.createElement("div");
         msgEl.className = "chat-msg";
-        if (getUsername() === msg.username.toLowerCase()) msgEl.classList.add("me");
+        const me = getUsername();
+        if (me && msg.username && me === msg.username.toLowerCase()) msgEl.classList.add("me");
         msgEl.innerHTML = `
           <div class="chat-msg-header">
             <span class="chat-msg-user">${msg.username}</span>
@@ -103,8 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dmTitle.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
     dmDesc.textContent = "Secure Private Chat";
     
-    const user = firebase.auth().currentUser;
-    if (user) {
+    if (getUsername()) {
       dmForm.style.display = "flex";
       dmLoginPrompt.style.display = "none";
     } else {
@@ -115,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dmAddFriendTop.style.display = "none";
 
     document.querySelectorAll("#dmListDms .channel-item").forEach(item => {
-      item.classList.toggle("active", item.dataset.user === friend);
+      item.classList.toggle("active", item.dataset.user.toLowerCase() === friend.toLowerCase());
     });
 
     initDmMessages();
@@ -179,15 +180,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (!me) return;
 
-    // Notifications Listener
+    // Notifications (Incoming Requests)
     if (unsubscribeNotifs) unsubscribeNotifs();
     unsubscribeNotifs = db.collection("friendRequests")
       .where("to", "==", me)
       .where("status", "==", "pending")
       .onSnapshot(snapshot => {
-        const count = snapshot.size;
-        notifCount.textContent = count;
-        notifCount.style.display = count > 0 ? "flex" : "none";
+        notifCount.textContent = snapshot.size;
+        notifCount.style.display = snapshot.size > 0 ? "flex" : "none";
 
         notifList.innerHTML = snapshot.empty 
           ? `<p style="text-align:center; opacity:0.5; padding: 20px;">No new notifications</p>`
@@ -211,12 +211,14 @@ document.addEventListener("DOMContentLoaded", () => {
         notifList.querySelectorAll(".btn-reject").forEach(b => b.addEventListener("click", () => rejectRequest(b.dataset.id)));
       });
 
-    // Friends Listener
+    // Friends List Sync
     if (unsubscribeFriends) unsubscribeFriends();
     unsubscribeFriends = db.collection("friends")
       .where("users", "array-contains", me)
       .onSnapshot(snapshot => {
+        console.log("Friends list update:", snapshot.size, "friends found");
         dmListDms.innerHTML = "";
+        
         if (snapshot.empty) {
           dmAddFriendTop.style.display = "block";
           dmDesc.textContent = "No friends yet. Add some to start chatting!";
@@ -226,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = doc.data();
             const friend = data.users.find(u => u.toLowerCase() !== me);
             if (!friend) return;
+            
             const el = document.createElement("div");
             el.className = "channel-item";
             el.dataset.user = friend;
@@ -234,19 +237,30 @@ document.addEventListener("DOMContentLoaded", () => {
             dmListDms.appendChild(el);
           });
         }
-      });
+      }, (error) => console.error("Friends list sync error:", error));
   }
 
   function acceptRequest(id, from) {
     const me = getUsername();
+    if (!me) return;
+    
     const batch = db.batch();
     batch.update(db.collection("friendRequests").doc(id), { status: "accepted" });
+    
     const friendshipId = [me, from.toLowerCase()].sort().join("_");
     batch.set(db.collection("friends").doc(friendshipId), { 
       users: [me, from.toLowerCase()], 
       timestamp: firebase.firestore.FieldValue.serverTimestamp() 
     });
-    batch.commit().then(() => showToast(`Accepted friend request from ${from}!`));
+    
+    batch.commit().then(() => {
+      showToast(`You are now friends with ${from}!`);
+      // Force a re-init just in case
+      initSocial();
+    }).catch(err => {
+      console.error("Accept error:", err);
+      showToast("Error accepting request");
+    });
   }
 
   function rejectRequest(id) {
@@ -260,10 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (notifBtn) notifBtn.addEventListener("click", () => notifModal.classList.add("open"));
   if (closeNotifModal) closeNotifModal.addEventListener("click", () => notifModal.classList.remove("open"));
 
-  // Topbar Friends Button (if added)
-  const topFriendsBtn = document.getElementById("topFriendsBtn");
-  if (topFriendsBtn) {
-    topFriendsBtn.addEventListener("click", () => {
+  if (document.getElementById("topFriendsBtn")) {
+    document.getElementById("topFriendsBtn").addEventListener("click", () => {
       showPage('dms');
       friendModal.classList.add("open");
     });
@@ -296,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // FORCE FRIENDSHIP SEED (One-time check)
+  // Seed friendship for testing
   function seedFriendship() {
     const me = getUsername();
     if (me === "theowner" || me === "alt") {
@@ -314,11 +326,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatTime(timestamp) {
     if (!timestamp) return "Just now";
-    const date = timestamp.toDate();
+    const date = (timestamp instanceof firebase.firestore.Timestamp) ? timestamp.toDate() : new Date();
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   function escapeHtml(unsafe) {
+    if (!unsafe) return "";
     return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
