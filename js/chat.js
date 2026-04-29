@@ -103,8 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
     dmTitle.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
     dmDesc.textContent = "Secure Private Chat";
     
-    dmForm.style.display = "flex";
-    dmLoginPrompt.style.display = "none";
+    const user = firebase.auth().currentUser;
+    if (user) {
+      dmForm.style.display = "flex";
+      dmLoginPrompt.style.display = "none";
+    } else {
+      dmForm.style.display = "none";
+      dmLoginPrompt.style.display = "flex";
+    }
+    
     dmAddFriendTop.style.display = "none";
 
     document.querySelectorAll("#dmListDms .channel-item").forEach(item => {
@@ -253,6 +260,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (notifBtn) notifBtn.addEventListener("click", () => notifModal.classList.add("open"));
   if (closeNotifModal) closeNotifModal.addEventListener("click", () => notifModal.classList.remove("open"));
 
+  // Topbar Friends Button (if added)
+  const topFriendsBtn = document.getElementById("topFriendsBtn");
+  if (topFriendsBtn) {
+    topFriendsBtn.addEventListener("click", () => showPage('dms'));
+  }
+
   if (document.getElementById("addFriendBtnDms")) {
     document.getElementById("addFriendBtnDms").addEventListener("click", () => friendModal.classList.add("open"));
   }
@@ -285,10 +298,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (me === "theowner" || me === "alt") {
       const friendshipId = ["theowner", "alt"].sort().join("_");
-      db.collection("friends").doc(friendshipId).set({
-        users: ["theowner", "alt"],
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      db.collection("friends").doc(friendshipId).get().then(doc => {
+        if (!doc.exists) {
+          db.collection("friends").doc(friendshipId).set({
+            users: ["theowner", "alt"],
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      });
     }
   }
 
