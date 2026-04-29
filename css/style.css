@@ -945,11 +945,12 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  background: rgba(255,255,255,0.05);
+  background: #1a1a24 !important; /* Solid dark background */
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
   margin-bottom: 10px;
-  color: #fff;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .notif-actions {

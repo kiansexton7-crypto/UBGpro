@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getUsername() {
     const user = firebase.auth().currentUser;
     if (!user || !user.email) return null;
+    // Always work with lowercase for database consistency
     return user.email.replace("@ubgpro.local", "").toLowerCase();
   }
 
@@ -101,22 +102,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================================
 
   function openDm(friend) {
-    currentDmFriend = friend;
+    currentDmFriend = friend.toLowerCase();
     dmTitle.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
     dmDesc.textContent = "Secure Private Chat";
     
-    if (getUsername()) {
-      dmForm.style.display = "flex";
-      dmLoginPrompt.style.display = "none";
+    // Explicitly update visibility
+    const user = firebase.auth().currentUser;
+    if (user) {
+      if (dmForm) dmForm.style.display = "flex";
+      if (dmLoginPrompt) dmLoginPrompt.style.display = "none";
     } else {
-      dmForm.style.display = "none";
-      dmLoginPrompt.style.display = "flex";
+      if (dmForm) dmForm.style.display = "none";
+      if (dmLoginPrompt) dmLoginPrompt.style.display = "flex";
     }
     
     dmAddFriendTop.style.display = "none";
 
     document.querySelectorAll("#dmListDms .channel-item").forEach(item => {
-      item.classList.toggle("active", item.dataset.user.toLowerCase() === friend.toLowerCase());
+      item.classList.toggle("active", item.dataset.user.toLowerCase() === currentDmFriend);
     });
 
     initDmMessages();
@@ -127,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (!me || !currentDmFriend) return;
 
-    const dmId = [me, currentDmFriend.toLowerCase()].sort().join("_");
+    const dmId = [me, currentDmFriend].sort().join("_");
     const query = db.collection("dms").doc(dmId).collection("messages")
       .orderBy("timestamp", "desc").limit(50);
 
@@ -163,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const text = dmInput.value.trim();
       if (!text) return;
       dmInput.value = "";
-      const dmId = [me, currentDmFriend.toLowerCase()].sort().join("_");
+      const dmId = [me, currentDmFriend].sort().join("_");
       db.collection("dms").doc(dmId).collection("messages").add({
         username: me,
         text: text,
@@ -216,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     unsubscribeFriends = db.collection("friends")
       .where("users", "array-contains", me)
       .onSnapshot(snapshot => {
-        console.log("Friends list update:", snapshot.size, "friends found");
+        console.log("Friends list sync:", snapshot.size, "records");
         dmListDms.innerHTML = "";
         
         if (snapshot.empty) {
@@ -237,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dmListDms.appendChild(el);
           });
         }
-      }, (error) => console.error("Friends list sync error:", error));
+      }, (error) => console.error("Friends sync error:", error));
   }
 
   function acceptRequest(id, from) {
@@ -254,12 +257,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     batch.commit().then(() => {
-      showToast(`You are now friends with ${from}!`);
-      // Force a re-init just in case
-      initSocial();
-    }).catch(err => {
-      console.error("Accept error:", err);
-      showToast("Error accepting request");
+      showToast(`Accepted friend request from ${from}!`);
+      initSocial(); // Force refresh
     });
   }
 
@@ -313,14 +312,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (me === "theowner" || me === "alt") {
       const friendshipId = ["theowner", "alt"].sort().join("_");
-      db.collection("friends").doc(friendshipId).get().then(doc => {
-        if (!doc.exists) {
-          db.collection("friends").doc(friendshipId).set({
-            users: ["theowner", "alt"],
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-      });
+      db.collection("friends").doc(friendshipId).set({
+        users: ["theowner", "alt"],
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
     }
   }
 
@@ -338,9 +333,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Auth Sync
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+      // Robust UI update
       if (chatForm) chatForm.style.display = "flex";
       if (chatLoginPrompt) chatLoginPrompt.style.display = "none";
       if (dmLoginPrompt) dmLoginPrompt.style.display = "none";
+      
       initGlobalChat();
       initSocial();
       seedFriendship();
@@ -349,6 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (chatLoginPrompt) chatLoginPrompt.style.display = "flex";
       if (dmLoginPrompt) dmLoginPrompt.style.display = "flex";
       if (dmForm) dmForm.style.display = "none";
+      
       if (unsubscribeChat) unsubscribeChat();
       if (unsubscribeDms) unsubscribeDms();
       if (unsubscribeNotifs) unsubscribeNotifs();
