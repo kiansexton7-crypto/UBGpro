@@ -29,14 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const notifCount = document.getElementById("notifCount");
 
   // Elements - Modals
-  const addFriendBtn = document.getElementById("addFriendBtn");
   const friendModal = document.getElementById("friendModal");
   const closeFriendModal = document.getElementById("closeFriendModal");
   const sendFriendRequestBtn = document.getElementById("sendFriendRequestBtn");
   const friendUsernameInput = document.getElementById("friendUsernameInput");
 
   // State
-  let currentChannel = "global"; 
   let currentDmFriend = null;
   let unsubscribeChat = null;
   let unsubscribeDms = null;
@@ -44,9 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let unsubscribeFriends = null;
 
   function getUsername() {
-    return (firebase.auth().currentUser && firebase.auth().currentUser.email) 
-      ? firebase.auth().currentUser.email.replace("@ubgpro.local", "") 
-      : null;
+    const user = firebase.auth().currentUser;
+    return (user && user.email) ? user.email.replace("@ubgpro.local", "") : null;
   }
 
   // ============================================================
@@ -84,13 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (chatForm) {
     chatForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const user = firebase.auth().currentUser;
-      if (!user) { showToast("You must be logged in to chat"); return; }
+      const me = getUsername();
+      if (!me) { showToast("You must be logged in to chat"); return; }
       const text = chatInput.value.trim();
       if (!text) return;
       chatInput.value = "";
       db.collection("messages").add({
-        username: getUsername(),
+        username: me,
         text: text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -103,20 +100,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openDm(friend) {
     currentDmFriend = friend;
-    dmTitle.textContent = `Chat with ${friend}`;
-    dmDesc.textContent = "Private Session";
+    dmTitle.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
+    dmDesc.textContent = "Secure Private Chat";
+    
+    // UI Cleanup
     dmForm.style.display = "flex";
     dmLoginPrompt.style.display = "none";
     dmAddFriendTop.style.display = "none";
+
+    // Highlight active friend in list
+    document.querySelectorAll("#dmListDms .channel-item").forEach(item => {
+      item.classList.toggle("active", item.dataset.user === friend);
+    });
+
     initDmMessages();
   }
 
   function initDmMessages() {
     if (unsubscribeDms) unsubscribeDms();
     const me = getUsername();
-    const dmId = [me, currentDmFriend].sort().join("_");
+    if (!me || !currentDmFriend) return;
 
-    const query = db.collection("dms").doc(dmId).collection("messages").orderBy("timestamp", "desc").limit(50);
+    const dmId = [me, currentDmFriend].sort().join("_");
+    const query = db.collection("dms").doc(dmId).collection("messages")
+      .orderBy("timestamp", "desc").limit(50);
 
     unsubscribeDms = query.onSnapshot((snapshot) => {
       if (!dmMessages) return;
@@ -145,12 +152,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (dmForm) {
     dmForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const user = firebase.auth().currentUser;
-      if (!user || !currentDmFriend) return;
+      const me = getUsername();
+      if (!me || !currentDmFriend) return;
       const text = dmInput.value.trim();
       if (!text) return;
       dmInput.value = "";
-      const me = getUsername();
       const dmId = [me, currentDmFriend].sort().join("_");
       db.collection("dms").doc(dmId).collection("messages").add({
         username: me,
@@ -168,7 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (!me) return;
 
-    // Notifications (Friend Requests)
+    // Listen for Notifications (Friend Requests)
+    if (unsubscribeNotifs) unsubscribeNotifs();
     unsubscribeNotifs = db.collection("friendRequests")
       .where("to", "==", me)
       .where("status", "==", "pending")
@@ -184,30 +191,30 @@ document.addEventListener("DOMContentLoaded", () => {
         snapshot.forEach(doc => {
           const req = doc.data();
           const el = document.createElement("div");
-          el.className = "channel-item";
-          el.style.justifyContent = "space-between";
+          el.className = "notif-item";
           el.innerHTML = `
-            <span><i class="fas fa-user-plus"></i> ${req.from}</span>
-            <div style="display:flex; gap:5px;">
-              <button class="btn-icon-small accept-btn" data-id="${doc.id}" data-from="${req.from}"><i class="fas fa-check"></i></button>
-              <button class="btn-icon-small reject-btn" data-id="${doc.id}"><i class="fas fa-times"></i></button>
+            <span><i class="fas fa-user-plus" style="color:var(--accent); margin-right:8px;"></i> <b>${req.from}</b> wants to be friends</span>
+            <div class="notif-actions">
+              <button class="btn-accept" data-id="${doc.id}" data-from="${req.from}" title="Accept"><i class="fas fa-check"></i></button>
+              <button class="btn-reject" data-id="${doc.id}" title="Reject"><i class="fas fa-times"></i></button>
             </div>
           `;
           notifList.appendChild(el);
         });
 
-        notifList.querySelectorAll(".accept-btn").forEach(b => b.addEventListener("click", () => acceptRequest(b.dataset.id, b.dataset.from)));
-        notifList.querySelectorAll(".reject-btn").forEach(b => b.addEventListener("click", () => rejectRequest(b.dataset.id)));
+        notifList.querySelectorAll(".btn-accept").forEach(b => b.addEventListener("click", () => acceptRequest(b.dataset.id, b.dataset.from)));
+        notifList.querySelectorAll(".btn-reject").forEach(b => b.addEventListener("click", () => rejectRequest(b.dataset.id)));
       });
 
-    // Friends List
+    // Listen for Friends List
+    if (unsubscribeFriends) unsubscribeFriends();
     unsubscribeFriends = db.collection("friends")
       .where("users", "array-contains", me)
       .onSnapshot(snapshot => {
         dmListDms.innerHTML = "";
         if (snapshot.empty) {
           dmAddFriendTop.style.display = "block";
-          dmDesc.textContent = "You haven't added any friends yet.";
+          dmDesc.textContent = "No friends yet. Add some to start chatting!";
         } else {
           dmAddFriendTop.style.display = "none";
           snapshot.forEach(doc => {
@@ -215,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const friend = data.users.find(u => u !== me);
             const el = document.createElement("div");
             el.className = "channel-item";
+            el.dataset.user = friend;
             el.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
             el.addEventListener("click", () => openDm(friend));
             dmListDms.appendChild(el);
@@ -231,22 +239,27 @@ document.addEventListener("DOMContentLoaded", () => {
       users: [me, from], 
       timestamp: firebase.firestore.FieldValue.serverTimestamp() 
     });
-    batch.commit().then(() => showToast(`You are now friends with ${from}!`));
+    batch.commit().then(() => {
+      showToast(`Accepted friend request from ${from}!`);
+    });
   }
 
   function rejectRequest(id) {
-    db.collection("friendRequests").doc(id).update({ status: "rejected" });
+    db.collection("friendRequests").doc(id).update({ status: "rejected" }).then(() => {
+      showToast("Friend request ignored");
+    });
   }
 
   // ============================================================
-  // UI EVENT LISTENERS
+  // UI HANDLERS
   // ============================================================
 
   if (notifBtn) notifBtn.addEventListener("click", () => notifModal.classList.add("open"));
   if (closeNotifModal) closeNotifModal.addEventListener("click", () => notifModal.classList.remove("open"));
 
-  if (addFriendBtn) addFriendBtn.addEventListener("click", () => friendModal.classList.add("open"));
-  if (document.getElementById("addFriendBtnDms")) document.getElementById("addFriendBtnDms").addEventListener("click", () => friendModal.classList.add("open"));
+  if (document.getElementById("addFriendBtnDms")) {
+    document.getElementById("addFriendBtnDms").addEventListener("click", () => friendModal.classList.add("open"));
+  }
   if (closeFriendModal) closeFriendModal.addEventListener("click", () => friendModal.classList.remove("open"));
 
   if (sendFriendRequestBtn) {
@@ -268,7 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Helpers
   function formatTime(timestamp) {
     if (!timestamp) return "Just now";
     const date = timestamp.toDate();
@@ -279,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
-  // AUTH STATE SYNC
+  // Auth Sync
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       if (chatForm) chatForm.style.display = "flex";
