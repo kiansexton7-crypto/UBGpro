@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getUsername() {
     const user = firebase.auth().currentUser;
-    return (user && user.email) ? user.email.replace("@ubgpro.local", "") : null;
+    return (user && user.email) ? user.email.replace("@ubgpro.local", "").toLowerCase() : null;
   }
 
   // ============================================================
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgs.forEach(msg => {
         const msgEl = document.createElement("div");
         msgEl.className = "chat-msg";
-        if (getUsername() === msg.username) msgEl.classList.add("me");
+        if (getUsername() === msg.username.toLowerCase()) msgEl.classList.add("me");
         msgEl.innerHTML = `
           <div class="chat-msg-header">
             <span class="chat-msg-user">${msg.username}</span>
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessages.appendChild(msgEl);
       });
       chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+    }, (error) => console.error("Chat sync error:", error));
   }
 
   if (chatForm) {
@@ -103,12 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
     dmTitle.innerHTML = `<i class="fas fa-user"></i> ${friend}`;
     dmDesc.textContent = "Secure Private Chat";
     
-    // UI Cleanup
     dmForm.style.display = "flex";
     dmLoginPrompt.style.display = "none";
     dmAddFriendTop.style.display = "none";
 
-    // Highlight active friend in list
     document.querySelectorAll("#dmListDms .channel-item").forEach(item => {
       item.classList.toggle("active", item.dataset.user === friend);
     });
@@ -121,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (!me || !currentDmFriend) return;
 
-    const dmId = [me, currentDmFriend].sort().join("_");
+    const dmId = [me, currentDmFriend.toLowerCase()].sort().join("_");
     const query = db.collection("dms").doc(dmId).collection("messages")
       .orderBy("timestamp", "desc").limit(50);
 
@@ -135,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgs.forEach(msg => {
         const msgEl = document.createElement("div");
         msgEl.className = "chat-msg";
-        if (me === msg.username) msgEl.classList.add("me");
+        if (me === msg.username.toLowerCase()) msgEl.classList.add("me");
         msgEl.innerHTML = `
           <div class="chat-msg-header">
             <span class="chat-msg-user">${msg.username}</span>
@@ -157,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const text = dmInput.value.trim();
       if (!text) return;
       dmInput.value = "";
-      const dmId = [me, currentDmFriend].sort().join("_");
+      const dmId = [me, currentDmFriend.toLowerCase()].sort().join("_");
       db.collection("dms").doc(dmId).collection("messages").add({
         username: me,
         text: text,
@@ -174,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     if (!me) return;
 
-    // Listen for Notifications (Friend Requests)
+    // Notifications Listener
     if (unsubscribeNotifs) unsubscribeNotifs();
     unsubscribeNotifs = db.collection("friendRequests")
       .where("to", "==", me)
@@ -195,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
           el.innerHTML = `
             <span><i class="fas fa-user-plus" style="color:var(--accent); margin-right:8px;"></i> <b>${req.from}</b> wants to be friends</span>
             <div class="notif-actions">
-              <button class="btn-accept" data-id="${doc.id}" data-from="${req.from}" title="Accept"><i class="fas fa-check"></i></button>
-              <button class="btn-reject" data-id="${doc.id}" title="Reject"><i class="fas fa-times"></i></button>
+              <button class="btn-accept" data-id="${doc.id}" data-from="${req.from}"><i class="fas fa-check"></i></button>
+              <button class="btn-reject" data-id="${doc.id}"><i class="fas fa-times"></i></button>
             </div>
           `;
           notifList.appendChild(el);
@@ -206,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         notifList.querySelectorAll(".btn-reject").forEach(b => b.addEventListener("click", () => rejectRequest(b.dataset.id)));
       });
 
-    // Listen for Friends List
+    // Friends Listener
     if (unsubscribeFriends) unsubscribeFriends();
     unsubscribeFriends = db.collection("friends")
       .where("users", "array-contains", me)
@@ -219,7 +217,8 @@ document.addEventListener("DOMContentLoaded", () => {
           dmAddFriendTop.style.display = "none";
           snapshot.forEach(doc => {
             const data = doc.data();
-            const friend = data.users.find(u => u !== me);
+            const friend = data.users.find(u => u.toLowerCase() !== me);
+            if (!friend) return;
             const el = document.createElement("div");
             el.className = "channel-item";
             el.dataset.user = friend;
@@ -235,19 +234,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     const batch = db.batch();
     batch.update(db.collection("friendRequests").doc(id), { status: "accepted" });
-    batch.set(db.collection("friends").doc([me, from].sort().join("_")), { 
-      users: [me, from], 
+    // Use lowercased usernames for the doc ID to avoid case mismatch issues
+    const friendshipId = [me, from.toLowerCase()].sort().join("_");
+    batch.set(db.collection("friends").doc(friendshipId), { 
+      users: [me, from.toLowerCase()], 
       timestamp: firebase.firestore.FieldValue.serverTimestamp() 
     });
-    batch.commit().then(() => {
-      showToast(`Accepted friend request from ${from}!`);
-    });
+    batch.commit().then(() => showToast(`Accepted friend request from ${from}!`));
   }
 
   function rejectRequest(id) {
-    db.collection("friendRequests").doc(id).update({ status: "rejected" }).then(() => {
-      showToast("Friend request ignored");
-    });
+    db.collection("friendRequests").doc(id).update({ status: "rejected" });
   }
 
   // ============================================================
@@ -264,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (sendFriendRequestBtn) {
     sendFriendRequestBtn.addEventListener("click", () => {
-      const target = friendUsernameInput.value.trim();
+      const target = friendUsernameInput.value.trim().toLowerCase();
       const me = getUsername();
       if (!target || target === me) return;
 
