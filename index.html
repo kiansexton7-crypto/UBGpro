@@ -26,14 +26,14 @@
     <a href="#" class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="#" class="nav-item" data-page="games"><i class="fas fa-gamepad"></i><span>All Games</span></a>
     <a href="#" class="nav-item" data-page="unity"><i class="fas fa-cube"></i><span>Unity Games</span></a>
-    <a href="#" class="nav-item" data-page="proxy"><i class="fas fa-shield-alt"></i><span>Proxy</span></a>
+    <a href="#" class="nav-item" data-page="work"><i class="fas fa-shield-alt"></i><span>Pwork</span></a>
     <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-mask"></i><span>Tab Cloak</span></a>
     <a href="#" class="nav-item" data-page="chat"><i class="fas fa-comments"></i><span>Global Chat</span></a>
   </nav>
   <div class="sidebar-bottom">
     <div class="proxy-status" id="proxyStatus">
       <span class="status-dot"></span>
-      <span class="status-text">Checking proxy...</span>
+      <span class="status-text">Checking work...</span>
     </div>
   </div>
 </aside>
@@ -70,7 +70,7 @@
         <p>Unblocked games with built-in proxy, tab cloaking, and instant play. No downloads.</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick="showPage('games')">Browse Games <i class="fas fa-arrow-right"></i></button>
-          <button class="btn-ghost" onclick="showPage('proxy')">Open Proxy <i class="fas fa-shield-alt"></i></button>
+          <button class="btn-ghost" onclick="showPage('work')">Open work <i class="fas fa-shield-alt"></i></button>
         </div>
       </div>
       <div class="hero-visual">
@@ -125,25 +125,25 @@
   <div class="page" id="page-proxy">
     <div class="proxy-page">
       <div class="proxy-header">
-        <h2><i class="fas fa-shield-alt"></i> Stealth Proxy</h2>
-        <p>Browse any website anonymously. Auto-switches proxy if one fails.</p>
+        <h2><i class="fas fa-shield-alt"></i> Stealth work</h2>
+        <p> Auto-switches work if one fails.</p>
       </div>
       <div class="proxy-bar">
         <div class="proxy-selector">
-          <label>Proxy Engine</label>
+          <label>work Engine</label>
           <select id="proxyEngine">
-            <option value="uv">Ultraviolet</option>
-            <option value="rh">Rammerhead</option>
-            <option value="corr">Corrosion</option>
+            <option value="uv">r</option>
+            <option value="rh">r</option>
+            <option value="corr">r</option>
           </select>
         </div>
         <div class="url-bar-wrap">
           <i class="fas fa-search"></i>
-          <input type="text" id="proxyUrl" placeholder="Search the web or enter a URL..." />
-          <button class="btn-primary" id="proxyGo">Go <i class="fas fa-arrow-right"></i></button>
+          <input type="text" id="workUrl" placeholder="Search the web or enter a URL..." />
+          <button class="btn-primary" id="workGo">Go <i class="fas fa-arrow-right"></i></button>
         </div>
       </div>
-      <div class="proxy-quick-links" id="proxyQuickLinks">
+      <div class="work-quick-links" id="workQuickLinks">
         <button class="quick-link-btn" data-url="https://youtube.com"><i class="fab fa-youtube" style="color:#ff0000"></i> YouTube</button>
         <button class="quick-link-btn" data-url="https://discord.com/app"><i class="fab fa-discord" style="color:#5865F2"></i> Discord</button>
         <button class="quick-link-btn" data-url="https://tiktok.com"><i class="fab fa-tiktok" style="color:#fff"></i> TikTok</button>
@@ -151,10 +151,10 @@
         <button class="quick-link-btn" data-url="https://twitter.com"><i class="fab fa-x-twitter" style="color:#fff"></i> X</button>
         <button class="quick-link-btn" data-url="https://google.com"><i class="fab fa-google" style="color:#4285F4"></i> Google</button>
       </div>
-      <div class="proxy-status-list" id="proxyStatusList"></div>
-      <div class="proxy-frame-wrap">
-        <iframe id="proxyFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
-        <div class="proxy-placeholder" id="proxyPlaceholder">
+      <div class="work-status-list" id="proxyStatusList"></div>
+      <div class="work-frame-wrap">
+        <iframe id="workFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+        <div class="work-placeholder" id="workPlaceholder">
           <i class="fas fa-shield-alt"></i>
           <p>Enter a URL above to start browsing</p>
         </div>
@@ -165,7 +165,7 @@
   <!-- CLOAK PAGE -->
   <div class="page" id="page-cloak">
     <div class="cloak-page">
-      <div class="proxy-header">
+      <div class="work-header">
         <h2><i class="fas fa-mask"></i> Tab Cloaker</h2>
         <p>Disguise this tab as something else. Press <kbd>Alt+X</kbd> as a panic key.</p>
       </div>
@@ -296,7 +296,6 @@
 <script src="js/auth.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/games.js"></script>
-<script src="js/proxy.js"></script>
 <script src="js/cloak.js"></script>
 <script src="js/app.js"></script>
 </body>
