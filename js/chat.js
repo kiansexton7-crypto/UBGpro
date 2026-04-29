@@ -234,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const me = getUsername();
     const batch = db.batch();
     batch.update(db.collection("friendRequests").doc(id), { status: "accepted" });
-    // Use lowercased usernames for the doc ID to avoid case mismatch issues
     const friendshipId = [me, from.toLowerCase()].sort().join("_");
     batch.set(db.collection("friends").doc(friendshipId), { 
       users: [me, from.toLowerCase()], 
@@ -257,6 +256,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("addFriendBtnDms")) {
     document.getElementById("addFriendBtnDms").addEventListener("click", () => friendModal.classList.add("open"));
   }
+  if (document.getElementById("addFriendBtnShortcut")) {
+    document.getElementById("addFriendBtnShortcut").addEventListener("click", () => friendModal.classList.add("open"));
+  }
   if (closeFriendModal) closeFriendModal.addEventListener("click", () => friendModal.classList.remove("open"));
 
   if (sendFriendRequestBtn) {
@@ -278,6 +280,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // FORCE FRIENDSHIP SEED (One-time check)
+  function seedFriendship() {
+    const me = getUsername();
+    if (me === "theowner" || me === "alt") {
+      const friendshipId = ["theowner", "alt"].sort().join("_");
+      db.collection("friends").doc(friendshipId).set({
+        users: ["theowner", "alt"],
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+  }
+
   function formatTime(timestamp) {
     if (!timestamp) return "Just now";
     const date = timestamp.toDate();
@@ -296,6 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dmLoginPrompt) dmLoginPrompt.style.display = "none";
       initGlobalChat();
       initSocial();
+      seedFriendship();
     } else {
       if (chatForm) chatForm.style.display = "none";
       if (chatLoginPrompt) chatLoginPrompt.style.display = "flex";
