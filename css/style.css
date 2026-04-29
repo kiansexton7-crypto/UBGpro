@@ -921,5 +921,63 @@ body {
 }
 .chat-login-prompt p { margin-bottom: 12px; color: var(--text2); }
 
+/* --- NOTIFICATIONS --- */
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
 
+/* --- DM SYSTEM --- */
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  opacity: 0.8;
+  padding: 40px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+
+.chat-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.chat-header p {
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+
+/* --- PAGE STRUCTURE --- */
+#page-dms .social-hub {
+  height: calc(100vh - 80px);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
