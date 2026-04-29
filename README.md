@@ -1,10 +1,9 @@
 # UBG Pro
 
-> 🎮 A professional unblocked games hub with 100+ games, proxy auto-fallback, tab cloaking, and Unity WebGL support.
+> 🎮 A professional unblocked games hub with 100+ games, tab cloaking, and Unity WebGL support.
 
 ## Features
 - **100+ Games** — Action, Shooting, Racing, Puzzle, Multiplayer, Unity & more
-- **Proxy Auto-Fallback** — Cycles through multiple proxy backends automatically
 - **Tab Cloaking** — Disguise as Google Docs, Khan Academy, Desmos, etc.
 - **About:Blank Cloak** — Full URL hiding trick
 - **Panic Key** — Press `Alt+X` to instantly open a cover tab

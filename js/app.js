@@ -156,6 +156,8 @@ function setupSearch() {
 // ============================================================
 // GAME MODAL
 // ============================================================
+let activeGame = null;
+
 function openGame(game) {
   const overlay = document.getElementById("modalOverlay");
   const frame = document.getElementById("gameFrame");
@@ -164,12 +166,18 @@ function openGame(game) {
 
   if (!overlay || !frame) return;
 
+  activeGame = game;
+
   title.textContent = game.name;
   cat.textContent = game.cat + (game.unity ? " · Unity" : "");
+  
   frame.src = game.url;
+  
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
 }
+
+
 
 function closeGame() {
   const overlay = document.getElementById("modalOverlay");
@@ -196,6 +204,8 @@ function setupModal() {
       else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
     });
   }
+
+
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {

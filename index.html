@@ -26,15 +26,11 @@
     <a href="#" class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="#" class="nav-item" data-page="games"><i class="fas fa-gamepad"></i><span>All Games</span></a>
     <a href="#" class="nav-item" data-page="unity"><i class="fas fa-cube"></i><span>Unity Games</span></a>
-    <a href="#" class="nav-item" data-page="proxy"><i class="fas fa-shield-alt"></i><span>Proxy</span></a>
+
     <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-mask"></i><span>Tab Cloak</span></a>
     <a href="#" class="nav-item" data-page="chat"><i class="fas fa-comments"></i><span>Global Chat</span></a>
   </nav>
   <div class="sidebar-bottom">
-    <div class="proxy-status" id="proxyStatus">
-      <span class="status-dot"></span>
-      <span class="status-text">Checking proxy...</span>
-    </div>
   </div>
 </aside>
 
@@ -67,10 +63,9 @@
       <div class="hero-content">
         <div class="hero-badge"><span class="pulse-dot"></span>100+ Games Live</div>
         <h1>Play Anything, <span class="gradient-text">Anywhere</span></h1>
-        <p>Unblocked games with built-in proxy, tab cloaking, and instant play. No downloads.</p>
+        <p>Unblocked games with tab cloaking and instant play. No downloads.</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick="showPage('games')">Browse Games <i class="fas fa-arrow-right"></i></button>
-          <button class="btn-ghost" onclick="showPage('proxy')">Open Proxy <i class="fas fa-shield-alt"></i></button>
         </div>
       </div>
       <div class="hero-visual">
@@ -121,46 +116,7 @@
     <div class="game-grid" id="unityGrid"></div>
   </div>
 
-  <!-- PROXY PAGE -->
-  <div class="page" id="page-proxy">
-    <div class="proxy-page">
-      <div class="proxy-header">
-        <h2><i class="fas fa-shield-alt"></i> Stealth Proxy</h2>
-        <p>Browse any website anonymously. Auto-switches proxy if one fails.</p>
-      </div>
-      <div class="proxy-bar">
-        <div class="proxy-selector">
-          <label>Proxy Engine</label>
-          <select id="proxyEngine">
-            <option value="uv">Ultraviolet</option>
-            <option value="rh">Rammerhead</option>
-            <option value="corr">Corrosion</option>
-          </select>
-        </div>
-        <div class="url-bar-wrap">
-          <i class="fas fa-search"></i>
-          <input type="text" id="proxyUrl" placeholder="Search the web or enter a URL..." />
-          <button class="btn-primary" id="proxyGo">Go <i class="fas fa-arrow-right"></i></button>
-        </div>
-      </div>
-      <div class="proxy-quick-links" id="proxyQuickLinks">
-        <button class="quick-link-btn" data-url="https://youtube.com"><i class="fab fa-youtube" style="color:#ff0000"></i> YouTube</button>
-        <button class="quick-link-btn" data-url="https://discord.com/app"><i class="fab fa-discord" style="color:#5865F2"></i> Discord</button>
-        <button class="quick-link-btn" data-url="https://tiktok.com"><i class="fab fa-tiktok" style="color:#fff"></i> TikTok</button>
-        <button class="quick-link-btn" data-url="https://reddit.com"><i class="fab fa-reddit" style="color:#ff4500"></i> Reddit</button>
-        <button class="quick-link-btn" data-url="https://twitter.com"><i class="fab fa-x-twitter" style="color:#fff"></i> X</button>
-        <button class="quick-link-btn" data-url="https://google.com"><i class="fab fa-google" style="color:#4285F4"></i> Google</button>
-      </div>
-      <div class="proxy-status-list" id="proxyStatusList"></div>
-      <div class="proxy-frame-wrap">
-        <iframe id="proxyFrame" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
-        <div class="proxy-placeholder" id="proxyPlaceholder">
-          <i class="fas fa-shield-alt"></i>
-          <p>Enter a URL above to start browsing</p>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- CLOAK PAGE -->
   <div class="page" id="page-cloak">
@@ -218,26 +174,67 @@
     </div>
   </div>
 
-  <!-- CHAT PAGE -->
+  <!-- SOCIAL HUB PAGE -->
   <div class="page" id="page-chat">
-    <div class="chat-page">
-      <div class="chat-header">
-        <h2><i class="fas fa-comments"></i> Global Chat</h2>
-        <p>Chat with other players on UBGPro in real-time!</p>
-      </div>
-      <div class="chat-container">
-        <div class="chat-messages" id="chatMessages">
-          <!-- Messages will load here -->
-        </div>
-        <div class="chat-input-area">
-          <div class="chat-login-prompt" id="chatLoginPrompt">
-            <p>You must be logged in to chat.</p>
-            <button class="btn-primary" id="openChatLoginBtn">Login / Sign Up</button>
+    <div class="social-page">
+      <div class="social-sidebar">
+        <div class="social-section">
+          <h3>Channels</h3>
+          <div class="channel-list" id="channelList">
+            <div class="channel-item active" data-id="global"><i class="fas fa-globe"></i> Global Chat</div>
           </div>
-          <form class="chat-form" id="chatForm" style="display:none">
-            <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" maxlength="200" />
-            <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
-          </form>
+        </div>
+        
+        <div class="social-section">
+          <div class="section-header-small">
+            <h3>Custom Rooms</h3>
+            <div class="section-actions">
+              <button class="btn-icon-small" id="createRoomBtn" title="Create Room"><i class="fas fa-plus"></i></button>
+              <button class="btn-icon-small" id="joinRoomBtn" title="Join Room"><i class="fas fa-sign-in-alt"></i></button>
+            </div>
+          </div>
+          <div class="channel-list" id="roomList">
+            <!-- Custom rooms populate here -->
+          </div>
+        </div>
+
+        <div class="social-section">
+          <div class="section-header-small">
+            <h3>Direct Messages</h3>
+            <div class="section-actions">
+              <button class="btn-icon-small" id="addFriendBtn" title="Add Friend"><i class="fas fa-user-plus"></i></button>
+            </div>
+          </div>
+          <div class="channel-list" id="dmList">
+            <!-- DMs / Friends populate here -->
+          </div>
+        </div>
+        
+        <div class="social-section" id="pendingRequestsSection" style="display:none">
+          <h3>Pending Requests</h3>
+          <div class="channel-list" id="requestList"></div>
+        </div>
+      </div>
+
+      <div class="social-main">
+        <div class="chat-header">
+          <h2 id="activeChatTitle"><i class="fas fa-globe"></i> Global Chat</h2>
+          <p id="activeChatDesc">Chat with other players on UBGPro in real-time!</p>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <!-- Messages load here -->
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-login-prompt" id="chatLoginPrompt">
+              <p>You must be logged in to chat.</p>
+              <button class="btn-primary" id="openChatLoginBtn">Login / Sign Up</button>
+            </div>
+            <form class="chat-form" id="chatForm" style="display:none">
+              <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" maxlength="200" />
+              <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -259,7 +256,7 @@
       </div>
     </div>
     <div class="modal-body">
-      <iframe id="gameFrame" src="about:blank" allowfullscreen allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr"></iframe>
+      <iframe id="gameFrame" src="about:blank" allowfullscreen referrerpolicy="no-referrer" allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr"></iframe>
     </div>
   </div>
 </div>
@@ -288,6 +285,43 @@
   </div>
 </div>
 
+<!-- SOCIAL MODALS -->
+<div class="modal-overlay" id="friendModal">
+  <div class="auth-modal">
+    <div class="modal-header">
+      <h3>Add Friend</h3>
+      <button class="btn-icon" id="closeFriendModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Enter Username</label>
+        <input type="text" id="friendUsernameInput" placeholder="e.g. Gamer123" />
+      </div>
+      <button class="btn-primary auth-submit" id="sendFriendRequestBtn">Send Request</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="roomModal">
+  <div class="auth-modal">
+    <div class="modal-header">
+      <h3 id="roomModalTitle">Room</h3>
+      <button class="btn-icon" id="closeRoomModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" id="roomNameGroup">
+        <label>Room Name</label>
+        <input type="text" id="roomNameInput" placeholder="e.g. My Secret Base" />
+      </div>
+      <div class="form-group" id="roomCodeGroup" style="display:none">
+        <label>Room Code</label>
+        <input type="text" id="roomCodeInput" placeholder="e.g. A7X9WQ" />
+      </div>
+      <button class="btn-primary auth-submit" id="roomActionBtn">Action</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -296,7 +330,7 @@
 <script src="js/auth.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/games.js"></script>
-<script src="js/proxy.js"></script>
+
 <script src="js/cloak.js"></script>
 <script src="js/app.js"></script>
 </body>

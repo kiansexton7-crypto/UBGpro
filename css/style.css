@@ -124,23 +124,7 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.proxy-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
-  color: var(--text2);
-}
 
-.status-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--text3);
-  animation: pulse 2s infinite;
-}
-
-.status-dot.live { background: var(--success); }
-.status-dot.dead { background: var(--danger); }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
@@ -578,175 +562,13 @@ body {
   font-weight: 500;
 }
 
-/* ============================
-   PROXY PAGE
-   ============================ */
-.proxy-page, .cloak-page {
+.cloak-page {
   max-width: 900px;
   margin: 0 auto;
   padding-top: 2rem;
 }
 
-.proxy-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
 
-.proxy-header h2 {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.proxy-header p { color: var(--text2); }
-
-.proxy-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.proxy-selector {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.proxy-selector label {
-  font-size: 0.85rem;
-  color: var(--text2);
-  white-space: nowrap;
-}
-
-.proxy-selector select {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  padding: 8px 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  outline: none;
-  cursor: pointer;
-}
-
-.url-bar-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 4px 4px 4px 14px;
-  transition: border-color 0.2s;
-}
-
-.url-bar-wrap:focus-within { border-color: var(--accent); }
-.url-bar-wrap i { color: var(--text3); }
-
-.url-bar-wrap input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-}
-
-.proxy-quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-
-.quick-link-btn {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 16px;
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.quick-link-btn:hover {
-  border-color: var(--accent);
-  background: rgba(139,92,246,0.1);
-  transform: translateY(-2px);
-}
-
-.quick-link-btn i {
-  font-size: 1.1rem;
-}
-
-.proxy-status-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.proxy-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 4px 12px;
-  font-size: 0.78rem;
-}
-
-.proxy-chip.live { border-color: rgba(16,185,129,0.3); color: var(--success); }
-.proxy-chip.dead { border-color: rgba(239,68,68,0.3); color: var(--danger); }
-.proxy-chip.checking { border-color: rgba(245,158,11,0.3); color: var(--accent3); }
-
-.proxy-frame-wrap {
-  position: relative;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  height: 65vh;
-}
-
-.proxy-frame-wrap iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: none;
-}
-
-.proxy-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  color: var(--text3);
-}
-
-.proxy-placeholder i { font-size: 3rem; }
 
 /* ============================
    CLOAK PAGE
@@ -1083,3 +905,6 @@ body {
   padding: 12px;
 }
 .chat-login-prompt p { margin-bottom: 12px; color: var(--text2); }
+
+
+}
