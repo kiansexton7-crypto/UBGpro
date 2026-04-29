@@ -1,0 +1,127 @@
+import requests
+import json
+import time
+
+games = [
+    {"id": 1, "name": "Stick Merge", "url": "https://www.crazygames.com/embed/stick-merge"},
+    {"id": 2, "name": "Bullet Force", "url": "https://www.crazygames.com/embed/bullet-force-multiplayer"},
+    {"id": 3, "name": "Venge.io", "url": "https://venge.io/"},
+    {"id": 4, "name": "Shell Shockers", "url": "https://shellshock.io/"},
+    {"id": 5, "name": "1v1.LOL", "url": "https://1v1.lol/"},
+    {"id": 6, "name": "Warbrokers.io", "url": "https://warbrokers.io/"},
+    {"id": 7, "name": "Krunker.io", "url": "https://krunker.io/"},
+    {"id": 8, "name": "Forward Assault", "url": "https://www.crazygames.com/embed/forward-assault-remix"},
+    {"id": 9, "name": "Pixel Combat 2", "url": "https://www.crazygames.com/embed/pixel-combat-2"},
+    {"id": 10, "name": "Combat Reloaded", "url": "https://www.crazygames.com/embed/combat-reloaded"},
+    {"id": 11, "name": "Slither.io", "url": "https://slither.io/"},
+    {"id": 12, "name": "Agar.io", "url": "https://agar.io/"},
+    {"id": 13, "name": "Surviv.io", "url": "https://surviv.io/"},
+    {"id": 14, "name": "Mope.io", "url": "https://mope.io/"},
+    {"id": 15, "name": "Diep.io", "url": "https://diep.io/"},
+    {"id": 16, "name": "Zombs Royale", "url": "https://zombsroyale.io/"},
+    {"id": 17, "name": "Skribbl.io", "url": "https://skribbl.io/"},
+    {"id": 18, "name": "Paper.io 2", "url": "https://www.crazygames.com/embed/paper-io-2"},
+    {"id": 19, "name": "Wormate.io", "url": "https://wormate.io/"},
+    {"id": 20, "name": "Splix.io", "url": "https://splix.io/"},
+    {"id": 21, "name": "Madalin Cars Multiplayer", "url": "https://www.crazygames.com/embed/madalin-cars-multiplayer"},
+    {"id": 22, "name": "Road Fury", "url": "https://www.crazygames.com/embed/road-fury"},
+    {"id": 23, "name": "Moto X3M", "url": "https://www.crazygames.com/embed/moto-x3m"},
+    {"id": 24, "name": "Moto X3M Winter", "url": "https://www.crazygames.com/embed/moto-x3m-winter"},
+    {"id": 25, "name": "Drift Boss", "url": "https://www.crazygames.com/embed/drift-boss"},
+    {"id": 26, "name": "Traffic Rider", "url": "https://www.crazygames.com/embed/traffic-rider"},
+    {"id": 27, "name": "Highway Racer", "url": "https://www.crazygames.com/embed/highway-racer"},
+    {"id": 28, "name": "Car Rush", "url": "https://www.crazygames.com/embed/car-rush"},
+    {"id": 29, "name": "Neon Rider", "url": "https://www.crazygames.com/embed/neon-rider"},
+    {"id": 30, "name": "2048", "url": "https://www.crazygames.com/embed/2048"},
+    {"id": 31, "name": "Cut the Rope", "url": "https://www.crazygames.com/embed/cut-the-rope-remastered"},
+    {"id": 32, "name": "Water Sort Puzzle", "url": "https://www.crazygames.com/embed/water-sort-puzzle"},
+    {"id": 33, "name": "Bob the Robber", "url": "https://www.crazygames.com/embed/bob-the-robber"},
+    {"id": 34, "name": "Jelly Doods", "url": "https://www.crazygames.com/embed/jelly-doods"},
+    {"id": 35, "name": "Find the Cat", "url": "https://www.crazygames.com/embed/find-the-cat"},
+    {"id": 36, "name": "Good Sudoku", "url": "https://www.crazygames.com/embed/good-sudoku"},
+    {"id": 37, "name": "Chess", "url": "https://www.chess.com/play/computer"},
+    {"id": 38, "name": "Wordle", "url": "https://www.nytimes.com/games/wordle/index.html"},
+    {"id": 39, "name": "Sugar Sugar", "url": "https://www.crazygames.com/embed/sugar-sugar-3"},
+    {"id": 40, "name": "Run 3", "url": "https://www.coolmathgames.com/0-run-3"},
+    {"id": 41, "name": "Fireboy Watergirl", "url": "https://www.crazygames.com/embed/fireboy-and-watergirl-1-the-forest-temple"},
+    {"id": 42, "name": "Tomb of the Cat", "url": "https://www.crazygames.com/embed/tomb-of-the-cat"},
+    {"id": 43, "name": "Geometry Dash Lite", "url": "https://www.crazygames.com/embed/geometry-dash"},
+    {"id": 44, "name": "Temple Run 2", "url": "https://poki.com/en/g/temple-run-2"},
+    {"id": 45, "name": "Stickman Hook", "url": "https://www.crazygames.com/embed/stickman-hook"},
+    {"id": 46, "name": "Bob the Robber 4", "url": "https://www.crazygames.com/embed/bob-the-robber-4"},
+    {"id": 47, "name": "Minecraft Classic", "url": "https://classic.minecraft.net/"},
+    {"id": 48, "name": "Basketball Stars", "url": "https://www.crazygames.com/embed/basketball-stars"},
+    {"id": 49, "name": "Soccer Skills World Cup", "url": "https://www.crazygames.com/embed/soccer-skills-world-cup"},
+    {"id": 50, "name": "Tennis Clash", "url": "https://www.crazygames.com/embed/tennis-clash-3d"},
+    {"id": 51, "name": "Rooftop Snipers", "url": "https://www.crazygames.com/embed/rooftop-snipers"},
+    {"id": 52, "name": "Football Legends", "url": "https://www.crazygames.com/embed/football-legends"},
+    {"id": 53, "name": "Golf Battle", "url": "https://www.crazygames.com/embed/golf-battle"},
+    {"id": 54, "name": "8 Ball Pool", "url": "https://www.crazygames.com/embed/8-ball-pool"},
+    {"id": 55, "name": "Bloons TD 5", "url": "https://www.crazygames.com/embed/bloons-tower-defense-5"},
+    {"id": 56, "name": "Kingdom Rush", "url": "https://www.crazygames.com/embed/kingdom-rush"},
+    {"id": 57, "name": "Clash of Clans", "url": "https://www.crazygames.com/embed/mini-royale-nations"},
+    {"id": 58, "name": "Warzone Commander", "url": "https://www.crazygames.com/embed/warzone-commander"},
+    {"id": 59, "name": "Mini Royale", "url": "https://miniroyale.io/"},
+    {"id": 60, "name": "Tiny Fishing", "url": "https://www.crazygames.com/embed/tiny-fishing"},
+    {"id": 61, "name": "Dino Squad", "url": "https://simmer.io/@simmer/dino-squad"},
+    {"id": 62, "name": "Smash Karts", "url": "https://smashkarts.io/"},
+    {"id": 63, "name": "Bonk.io", "url": "https://bonk.io/"},
+    {"id": 64, "name": "Narrow.One", "url": "https://narrow.one/"},
+    {"id": 65, "name": "Getaway Shootout", "url": "https://www.crazygames.com/embed/getaway-shootout"},
+    {"id": 66, "name": "Ragdoll Archers", "url": "https://www.crazygames.com/embed/ragdoll-archers"},
+    {"id": 67, "name": "Slope", "url": "https://slope-game.github.io/"},
+    {"id": 68, "name": "Uno Online", "url": "https://www.crazygames.com/embed/uno-online"},
+    {"id": 69, "name": "Tribals.io", "url": "https://tribals.io/"},
+    {"id": 70, "name": "GoBattle.io", "url": "https://gobattle.io/"},
+    {"id": 71, "name": "Town of Salem", "url": "https://www.blankmediagames.com/TownOfSalem/"},
+    {"id": 72, "name": "Lost Ruins", "url": "https://simmer.io/@simmer/lost-ruins"},
+    {"id": 73, "name": "Knife Hit", "url": "https://www.crazygames.com/embed/knife-hit"},
+    {"id": 74, "name": "Stickman Fighter", "url": "https://www.crazygames.com/embed/stickman-fighter-epic-battle"},
+    {"id": 75, "name": "Iron Snout", "url": "https://www.crazygames.com/embed/iron-snout"},
+    {"id": 76, "name": "Banjo Kazooie", "url": "https://www.crazygames.com/embed/stickman-hook"},
+    {"id": 77, "name": "Raze 3", "url": "https://www.crazygames.com/embed/raze"},
+    {"id": 78, "name": "Super Smash Flash 2", "url": "https://www.supersmashflash.com/"},
+    {"id": 79, "name": "Masked Forces", "url": "https://www.crazygames.com/embed/masked-forces"},
+    {"id": 80, "name": "House of Hazards", "url": "https://www.crazygames.com/embed/house-of-hazards"},
+    {"id": 81, "name": "Stickman Army", "url": "https://www.crazygames.com/embed/stickman-army-team-battle"},
+    {"id": 82, "name": "Crossy Road", "url": "https://www.crazygames.com/embed/crossy-road"},
+    {"id": 83, "name": "Duck Life 4", "url": "https://www.crazygames.com/embed/duck-life-4"},
+    {"id": 84, "name": "Learn to Fly 3", "url": "https://www.crazygames.com/embed/learn-to-fly-3"},
+    {"id": 85, "name": "Doodle Jump", "url": "https://www.crazygames.com/embed/doodle-jump"},
+    {"id": 86, "name": "Subway Surfers", "url": "https://www.crazygames.com/embed/subway-surfers"},
+    {"id": 87, "name": "Stick War Legacy", "url": "https://www.crazygames.com/embed/stick-war-legacy"},
+    {"id": 88, "name": "Sniper 3D", "url": "https://www.crazygames.com/embed/sniper-3d"},
+    {"id": 89, "name": "Idle Breakout", "url": "https://www.crazygames.com/embed/idle-breakout"},
+    {"id": 90, "name": "Cookie Clicker", "url": "https://orteil.dashnet.org/cookieclicker/"},
+    {"id": 91, "name": "Drive Mad", "url": "https://www.crazygames.com/embed/drive-mad"},
+    {"id": 92, "name": "Tank Trouble", "url": "https://www.crazygames.com/embed/tank-trouble"},
+    {"id": 93, "name": "Stick Fight", "url": "https://www.crazygames.com/embed/stick-duel-medieval-wars"},
+    {"id": 94, "name": "Fall Guys Knockouts", "url": "https://www.crazygames.com/embed/stumble-guys"},
+    {"id": 95, "name": "Eggy Car", "url": "https://www.crazygames.com/embed/eggy-car"},
+    {"id": 96, "name": "Retro Bowl", "url": "https://www.crazygames.com/embed/retro-bowl"},
+    {"id": 97, "name": "Helix Jump", "url": "https://www.crazygames.com/embed/helix-jump"},
+    {"id": 100, "name": "Backflip Dive", "url": "https://www.crazygames.com/embed/backflip-dive-3d"},
+    {"id": 101, "name": "Lordz.io", "url": "https://www.lordz.io/"},
+    {"id": 102, "name": "Fortnite Chapter 2", "url": "https://www.crazygames.com/embed/fortnite-chapter-2"},
+    {"id": 103, "name": "Among Us Online", "url": "https://www.crazygames.com/embed/among-us-online-edition"},
+    {"id": 104, "name": "Clash of Armies", "url": "https://www.crazygames.com/embed/clash-of-armies"},
+    {"id": 105, "name": "Snake.io", "url": "https://www.crazygames.com/embed/snake-io"},
+]
+
+broken = []
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+
+for game in games:
+    try:
+        resp = requests.head(game['url'], headers=headers, timeout=5, allow_redirects=True)
+        if resp.status_code >= 400:
+            print(f"Broken: {game['name']} (Status: {resp.status_code})")
+            broken.append(game['id'])
+        else:
+            print(f"Working: {game['name']} ({resp.status_code})")
+    except Exception as e:
+        print(f"Broken: {game['name']} (Error: {e})")
+        broken.append(game['id'])
+
+print("\nFinal list of broken IDs:")
+print(broken)
