@@ -263,7 +263,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Topbar Friends Button (if added)
   const topFriendsBtn = document.getElementById("topFriendsBtn");
   if (topFriendsBtn) {
-    topFriendsBtn.addEventListener("click", () => showPage('dms'));
+    topFriendsBtn.addEventListener("click", () => {
+      showPage('dms');
+      friendModal.classList.add("open");
+    });
   }
 
   if (document.getElementById("addFriendBtnDms")) {
