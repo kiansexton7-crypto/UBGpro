@@ -27,7 +27,7 @@
     <a href="#" class="nav-item" data-page="games"><i class="fas fa-gamepad"></i><span>All Games</span></a>
     <a href="#" class="nav-item" data-page="unity"><i class="fas fa-cube"></i><span>Unity Games</span></a>
 
-    <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-mask"></i><span>Tab Cloak</span></a>
+    <a href="#" class="nav-item" data-page="cloak"><i class="fas fa-user-secret"></i><span>Stealth Tab</span></a>
     <a href="#" class="nav-item" data-page="chat"><i class="fas fa-comments"></i><span>Global Chat</span></a>
   </nav>
   <div class="sidebar-bottom">
@@ -63,7 +63,7 @@
       <div class="hero-content">
         <div class="hero-badge"><span class="pulse-dot"></span>100+ Games Live</div>
         <h1>Play Anything, <span class="gradient-text">Anywhere</span></h1>
-        <p>Unblocked games with tab cloaking and instant play. No downloads.</p>
+        <p>Unblocked games with stealth tabs and instant play. No downloads.</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick="showPage('games')">Browse Games <i class="fas fa-arrow-right"></i></button>
         </div>
@@ -122,8 +122,8 @@
   <div class="page" id="page-cloak">
     <div class="cloak-page">
       <div class="cloak-header">
-        <h2><i class="fas fa-mask"></i> Tab Cloaker</h2>
-        <p>Disguise this tab as something else. Press <kbd>Alt+X</kbd> as a panic key.</p>
+        <h2><i class="fas fa-user-secret"></i> Stealth Tab</h2>
+        <p>Disguise this tab as something else and set your emergency panic key.</p>
       </div>
       <div class="cloak-presets">
         <button class="cloak-preset" data-title="Google Docs" data-icon="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico">
@@ -170,6 +170,25 @@
         <h3>About:Blank Cloak</h3>
         <p>Opens the site in a hidden about:blank tab — the URL bar shows nothing.</p>
         <button class="btn-primary" id="blankCloakBtn"><i class="fas fa-ghost"></i> Open in About:Blank</button>
+      </div>
+
+      <div class="panic-settings">
+        <h3>Panic Key Settings</h3>
+        <p>Configure a key combination and a redirect URL for emergencies.</p>
+        <div class="cloak-form">
+          <div class="form-group">
+            <label>Panic Key (e.g. x, q, Escape)</label>
+            <div style="display:flex; gap:8px;">
+              <span class="search-kbd">Alt + </span>
+              <input type="text" id="panicKeyInput" placeholder="x" maxlength="1" style="width:60px; text-align:center;"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Panic Redirect URL</label>
+            <input type="text" id="panicUrlInput" placeholder="https://classroom.google.com"/>
+          </div>
+          <button class="btn-primary" id="savePanicBtn">Save Panic Settings</button>
+        </div>
       </div>
     </div>
   </div>

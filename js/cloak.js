@@ -1,14 +1,12 @@
 // ============================================================
-// UBG PRO — TAB CLOAKING SYSTEM
+// UBG PRO — STEALTH TAB SYSTEM
 // ============================================================
 
 const CLOAK_KEY = "ubgpro_cloak";
+const PANIC_SETTINGS_KEY = "ubgpro_panic";
 
 function applyCloak(title, iconUrl) {
-  // Change page title
   document.title = title;
-
-  // Change favicon
   let link = document.querySelector("link[rel~='icon']");
   if (!link) {
     link = document.createElement("link");
@@ -16,10 +14,8 @@ function applyCloak(title, iconUrl) {
     document.head.appendChild(link);
   }
   link.href = iconUrl;
-
-  // Save to localStorage
   localStorage.setItem(CLOAK_KEY, JSON.stringify({ title, iconUrl }));
-  showToast(`🎭 Cloaked as: ${title}`);
+  showToast(`🎭 Stealth Mode: ${title}`);
 }
 
 function removeCloak() {
@@ -27,7 +23,7 @@ function removeCloak() {
   let link = document.querySelector("link[rel~='icon']");
   if (link) link.href = "assets/favicon.ico";
   localStorage.removeItem(CLOAK_KEY);
-  showToast("✅ Cloak removed");
+  showToast("✅ Stealth mode removed");
 }
 
 function loadSavedCloak() {
@@ -56,23 +52,41 @@ function openAboutBlank() {
   <iframe src="${location.href}" style="width:100%;height:100vh;border:none;"></iframe>
   </body></html>`);
   doc.close();
-  showToast("👻 Opened in about:blank tab");
+  showToast("👻 Opened in stealth tab");
 }
 
-// Panic key — press Alt+X to open a blank Google Docs tab
+// Panic key system
+function getPanicSettings() {
+  const saved = localStorage.getItem(PANIC_SETTINGS_KEY);
+  return saved ? JSON.parse(saved) : { key: 'x', url: 'https://classroom.google.com' };
+}
+
+function savePanicSettings(key, url) {
+  if (!key || !url) return;
+  localStorage.setItem(PANIC_SETTINGS_KEY, JSON.stringify({ key: key.toLowerCase(), url }));
+  showToast("🚨 Panic settings saved!");
+}
+
 function setupPanicKey() {
   document.addEventListener("keydown", (e) => {
-    if (e.altKey && e.key === "x") {
-      window.open("https://docs.google.com/", "_blank");
-      showToast("🚨 Panic key activated!");
+    const settings = getPanicSettings();
+    if (e.altKey && e.key.toLowerCase() === settings.key) {
+      window.location.href = settings.url;
     }
   });
 }
 
-// Init cloak system
+// Init system
 document.addEventListener("DOMContentLoaded", () => {
   loadSavedCloak();
   setupPanicKey();
+
+  // Load panic settings into UI
+  const settings = getPanicSettings();
+  const panicKeyInput = document.getElementById("panicKeyInput");
+  const panicUrlInput = document.getElementById("panicUrlInput");
+  if (panicKeyInput) panicKeyInput.value = settings.key;
+  if (panicUrlInput) panicUrlInput.value = settings.url;
 
   // Preset buttons
   document.querySelectorAll(".cloak-preset").forEach(btn => {
@@ -80,9 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const title = btn.dataset.title;
       const icon = btn.dataset.icon;
       applyCloak(title, icon);
-      // Visually highlight active preset
-      document.querySelectorAll(".cloak-preset").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
     });
   });
 
@@ -90,8 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const applyBtn = document.getElementById("applyCloakBtn");
   const removeBtn = document.getElementById("removeCloakBtn");
   const blankBtn = document.getElementById("blankCloakBtn");
-  const panicBtn = document.getElementById("panicBtn");
-  const cloakBtn = document.getElementById("cloakBtn");
+  const savePanicBtn = document.getElementById("savePanicBtn");
+  const headerPanicBtn = document.getElementById("panicBtn");
+  const headerCloakBtn = document.getElementById("cloakBtn");
 
   if (applyBtn) applyBtn.addEventListener("click", () => {
     const title = document.getElementById("cloakTitle").value || "Google Docs";
@@ -102,15 +114,22 @@ document.addEventListener("DOMContentLoaded", () => {
   if (removeBtn) removeBtn.addEventListener("click", removeCloak);
   if (blankBtn) blankBtn.addEventListener("click", openAboutBlank);
 
+  if (savePanicBtn) {
+    savePanicBtn.addEventListener("click", () => {
+      const key = document.getElementById("panicKeyInput").value;
+      const url = document.getElementById("panicUrlInput").value;
+      savePanicSettings(key, url);
+    });
+  }
+
   // Header panic btn
-  if (panicBtn) panicBtn.addEventListener("click", () => {
-    window.open("https://docs.google.com/", "_blank");
-    showToast("🚨 Panic! Redirecting...");
+  if (headerPanicBtn) headerPanicBtn.addEventListener("click", () => {
+    const settings = getPanicSettings();
+    window.location.href = settings.url;
   });
 
   // Header quick cloak btn
-  if (cloakBtn) cloakBtn.addEventListener("click", () => {
+  if (headerCloakBtn) headerCloakBtn.addEventListener("click", () => {
     applyCloak("Google Docs - Untitled Document", "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
-    showToast("🎭 Quick cloaked as Google Docs");
   });
 });
