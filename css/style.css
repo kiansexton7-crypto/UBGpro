@@ -620,7 +620,7 @@ body {
   transform: translateY(-3px);
 }
 
-.cloak-custom, .cloak-blank-wrap {
+.cloak-custom, .cloak-blank-wrap, .panic-settings {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
